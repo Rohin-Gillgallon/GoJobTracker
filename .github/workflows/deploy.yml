@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -37,6 +37,10 @@ jobs:
       - name: Deploy to Railway
         run: |
           npm install -g @railway/cli
-          railway up --service go-job-tracker --project ${{ secrets.RAILWAY_PROJECT_ID || '' }}
+          if [ -n "${{ secrets.RAILWAY_PROJECT_ID }}" ]; then
+            railway up --service go-job-tracker --project ${{ secrets.RAILWAY_PROJECT_ID }}
+          else
+            railway up --service go-job-tracker
+          fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
