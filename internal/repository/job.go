@@ -3,8 +3,8 @@ package repository
 import (
 	"fmt"
 
+	"github.com/Rohin-Gillgallon/GoJobTracker/internal/models"
 	"github.com/jmoiron/sqlx"
-	"github.com/yourusername/go-job-tracker/internal/models"
 )
 
 type JobRepository struct {

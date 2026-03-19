@@ -14,6 +14,13 @@ type Config struct {
 	Env         string
 }
 
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
+}
+
 func Load() *Config {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
@@ -25,11 +32,4 @@ func Load() *Config {
 		Port:        getEnv("PORT", "8080"),
 		Env:         getEnv("ENV", "development"),
 	}
-}
-
-func getEnv(key, fallback string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return fallback
 }
