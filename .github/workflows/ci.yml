@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["*"]
+    branches: ["**"]
   pull_request:
     branches: [main]
 
@@ -44,6 +44,7 @@ jobs:
       - name: Run migrations
         run: |
           go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+          export PATH=$PATH:$(go env GOPATH)/bin
           migrate -path ./migrations -database "postgres://postgres:postgres@localhost:5432/jobtracker_test?sslmode=disable" up
 
       - name: Run tests
