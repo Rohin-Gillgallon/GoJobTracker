@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 
@@ -21,7 +22,11 @@ import (
 )
 
 func setupJobHandler(t *testing.T) (*handlers.JobHandler, string) {
-	db := database.New("postgres://postgres:postgres@localhost:5433/jobtracker_test?sslmode=disable")
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgres://postgres:postgres@localhost:5433/jobtracker_test?sslmode=disable"
+	}
+	db := database.New(dbURL)
 	t.Cleanup(func() { db.Close() })
 
 	jobRepo := repository.NewJobRepository(db)
