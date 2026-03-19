@@ -55,7 +55,9 @@ func (h *JobHandler) CreateJob(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(job)
+	if err := json.NewEncoder(w).Encode(job); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }
 
 func (h *JobHandler) GetAllJobs(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +88,9 @@ func (h *JobHandler) GetAllJobs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(jobs)
+	if err := json.NewEncoder(w).Encode(jobs); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }
 
 func (h *JobHandler) GetJobByID(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +105,9 @@ func (h *JobHandler) GetJobByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(job)
+	if err := json.NewEncoder(w).Encode(job); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }
 
 func (h *JobHandler) UpdateJob(w http.ResponseWriter, r *http.Request) {
@@ -132,7 +138,9 @@ func (h *JobHandler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(job)
+	if err := json.NewEncoder(w).Encode(job); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }
 
 func (h *JobHandler) DeleteJob(w http.ResponseWriter, r *http.Request) {
