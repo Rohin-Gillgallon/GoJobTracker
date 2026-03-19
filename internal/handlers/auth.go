@@ -42,6 +42,11 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Password: string(hashed),
 	}
 
+	if err := h.userRepo.Create(user); err != nil {
+		http.Error(w, "email already exists", http.StatusConflict)
+		return
+	}
+
 	tokens, err := auth.GenerateTokenPair(user.ID, h.secret)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)

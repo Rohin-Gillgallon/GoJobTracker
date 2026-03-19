@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+
 	"net/http"
 	"strconv"
 
@@ -138,7 +140,11 @@ func (h *JobHandler) DeleteJob(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	if err := h.jobRepo.Delete(id, userID); err != nil {
-		http.Error(w, "failed to delete job from database", http.StatusInternalServerError)
+		if err == sql.ErrNoRows {
+			http.Error(w, "job not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 

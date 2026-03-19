@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/Rohin-Gillgallon/GoJobTracker/internal/models"
@@ -91,6 +92,18 @@ func (r *JobRepository) Update(job *models.Job) error {
 
 func (r *JobRepository) Delete(id, userID string) error {
 	query := `DELETE FROM jobs WHERE id = $1 AND user_id = $2`
-	_, err := r.db.Exec(query, id, userID)
-	return err
+	result, err := r.db.Exec(query, id, userID)
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
 }

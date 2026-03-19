@@ -16,19 +16,10 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 func (r *UserRepository) Create(user *models.User) error {
 	query := `
 		INSERT INTO users (email, password)
-		VALUES (:email, :password)
+		VALUES ($1, $2)
 		RETURNING id, created_at, updated_at`
 
-	rows, err := r.db.NamedQuery(query, user)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		return rows.StructScan(user)
-	}
-	return nil
+	return r.db.QueryRowx(query, user.Email, user.Password).StructScan(user)
 }
 
 func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
