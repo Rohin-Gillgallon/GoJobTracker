@@ -32,7 +32,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25.0"
           cache: true
 
       - name: Install golangci-lint
@@ -40,6 +40,8 @@ jobs:
         with:
           version: latest
           args: --timeout=3m
+        env:
+          GOLANGCI_LINT_SKIP_GO_VERSION_CHECK: 1
 
       - name: Run migrations
         run: |
