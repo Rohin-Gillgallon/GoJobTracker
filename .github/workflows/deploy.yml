@@ -37,6 +37,6 @@ jobs:
       - name: Deploy to Railway
         run: |
           npm install -g @railway/cli
-          railway up --service go-job-tracker
+          railway up --service go-job-tracker --project ${{ secrets.RAILWAY_PROJECT_ID || '' }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
