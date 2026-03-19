@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,6 +43,14 @@ func main() {
 		r.Get("/jobs/{id}", jobHandler.GetJobByID)
 		r.Put("/jobs/{id}", jobHandler.UpdateJob)
 		r.Delete("/jobs/{id}", jobHandler.DeleteJob)
+	})
+
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"status":  "ok",
+			"message": "Job Tracker API",
+		})
 	})
 
 	address := fmt.Sprintf(":%s", cfg.Port)
