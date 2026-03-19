@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/Rohin-Gillgallon/GoJobTracker/internal/auth"
@@ -44,8 +43,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.userRepo.Create(user); err != nil {
-		log.Printf("Register error: %v", err)
-		http.Error(w, err.Error(), http.StatusConflict)
+		http.Error(w, "email already exists", http.StatusConflict)
 		return
 	}
 
