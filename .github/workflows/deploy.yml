@@ -35,8 +35,7 @@ jobs:
           tags: ghcr.io/${{ env.REPO_LOWER }}:latest
 
       - name: Deploy to Railway
-        run: |
-          npm install -g @railway/cli
-          railway up --service go-job-tracker
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        uses: railwayapp/action@master
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: go-job-tracker

@@ -35,13 +35,10 @@ jobs:
           go-version: "1.25.0"
           cache: true
 
-      - name: Install golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          args: --timeout=3m
-        env:
-          GOLANGCI_LINT_SKIP_GO_VERSION_CHECK: 1
+      - name: Run golangci-lint
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+          $(go env GOPATH)/bin/golangci-lint run --timeout=3m
 
       - name: Run migrations
         run: |
