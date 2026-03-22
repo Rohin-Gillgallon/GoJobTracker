@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>GoJobTracker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 60px 16px;
+            background: #f5f5f5;
+        }
+
+        .card {
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        p {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        button {
+            width: 100%;
+            padding: 11px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        button:hover {
+            background: #4338ca;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .msg {
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        .msg.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .msg.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>GoJobTracker</h1>
+        <p>Track your job applications</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+
+        <div id="login">
+            <label>Email</label>
+            <input id="l-email" type="email" placeholder="you@example.com" />
+            <label>Password</label>
+            <input id="l-pass" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            <button id="l-btn" onclick="login()">Sign In</button>
+        </div>
+
+        <div id="register" style="display:none">
+            <label>Email</label>
+            <input id="r-email" type="email" placeholder="you@example.com" />
+            <label>Password</label>
+            <input id="r-pass" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            <button id="r-btn" onclick="register()">Create Account</button>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://gojobtracker-production.up.railway.app';
+
+        function switchTab(tab) {
+            document.getElementById('login').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register').style.display = tab === 'register' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
+            setMsg('', '');
+        }
+
+        function setMsg(text, type) {
+            const el = document.getElementById('msg');
+            el.textContent = text;
+            el.className = 'msg ' + type;
+        }
+
+        async function login() {
+            const email = document.getElementById('l-email').value.trim();
+            const pass = document.getElementById('l-pass').value;
+            if (!email || !pass) { setMsg('Please fill in all fields.', 'error'); return; }
+
+            document.getElementById('l-btn').disabled = true;
+            document.getElementById('l-btn').textContent = 'Signing in...';
+
+            try {
+                const res = await fetch(API + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass })
+                });
+                const text = await res.text();
+                if (!res.ok) { setMsg(text.trim() || 'Invalid credentials.', 'error'); return; }
+                const data = JSON.parse(text);
+                setMsg('Logged in successfully!', 'success');
+            } catch {
+                setMsg('Network error. Please try again.', 'error');
+            } finally {
+                document.getElementById('l-btn').disabled = false;
+                document.getElementById('l-btn').textContent = 'Sign In';
+            }
+        }
+
+        async function register() {
+            const email = document.getElementById('r-email').value.trim();
+            const pass = document.getElementById('r-pass').value;
+            if (!email || !pass) { setMsg('Please fill in all fields.', 'error'); return; }
+            if (pass.length < 6) { setMsg('Password must be at least 6 characters.', 'error'); return; }
+
+            document.getElementById('r-btn').disabled = true;
+            document.getElementById('r-btn').textContent = 'Creating account...';
+
+            try {
+                const res = await fetch(API + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass })
+                });
+                const text = await res.text();
+                if (!res.ok) { setMsg(text.trim() || 'Registration failed.', 'error'); return; }
+                setMsg('Account created! You can now log in.', 'success');
+            } catch {
+                setMsg('Network error. Please try again.', 'error');
+            } finally {
+                document.getElementById('r-btn').disabled = false;
+                document.getElementById('r-btn').textContent = 'Create Account';
+            }
+        }
+    </script>
+</body>
+
+</html>
