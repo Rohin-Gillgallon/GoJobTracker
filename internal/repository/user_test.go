@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -13,7 +14,11 @@ import (
 )
 
 func setupUserRepo(t *testing.T) *repository.UserRepository {
-	db := database.New("postgres://postgres:postgres@localhost:5433/jobtracker_test?sslmode=disable")
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgres://postgres:postgres@localhost:5433/jobtracker_test?sslmode=disable"
+	}
+	db := database.New(dbURL)
 	t.Cleanup(func() { db.Close() })
 	return repository.NewUserRepository(db)
 }
