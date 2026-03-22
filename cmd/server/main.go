@@ -35,10 +35,12 @@ func main() {
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{
+		if err := json.NewEncoder(w).Encode(map[string]string{
 			"status":  "ok",
 			"message": "Job Tracker API",
-		})
+		}); err != nil {
+			http.Error(w, "error encoding json", http.StatusInternalServerError)
+		}
 	})
 
 	router.Post("/auth/register", authHandler.Register)
@@ -65,6 +67,6 @@ func main() {
 	log.Printf("Starting server on %s", address)
 
 	if err := http.ListenAndServe(address, router); err != nil {
-		log.Fatal("ListenAndServe error: ", err)
+		log.Fatal("listen and server error: ", err)
 	}
 }
