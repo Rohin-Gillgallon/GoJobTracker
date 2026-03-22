@@ -33,6 +33,14 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.RequestID)
 
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "ok",
+			"message": "Job Tracker API",
+		})
+	})
+
 	router.Post("/auth/register", authHandler.Register)
 	router.Post("/auth/login", authHandler.Login)
 
