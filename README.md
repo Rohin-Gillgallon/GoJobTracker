@@ -3,6 +3,7 @@
 A RESTful API built in Go for tracking job applications. Features JWT authentication, full CRUD operations, filtering, and pagination.
 
 🚀 **Live API**: https://gojobtracker-production.up.railway.app
+🌐 **Frontend**: https://rohin-gillgallon.github.io/GoJobTracker
 
 ## Tech Stack
 
@@ -13,6 +14,7 @@ A RESTful API built in Go for tracking job applications. Features JWT authentica
 - **Migrations**: golang-migrate
 - **Containerisation**: Docker + Docker Compose
 - **CI/CD**: GitHub Actions + Railway
+- **Frontend**: Vanilla HTML/CSS/JS hosted on GitHub Pages
 
 ## Endpoints
 
@@ -75,6 +77,16 @@ go run ./cmd/server
 
 The API will be available at `http://localhost:8080`.
 
+### Frontend
+
+Open the frontend locally:
+```bash
+cd frontend
+python -m http.server 3000
+```
+
+Then visit `http://localhost:3000`.
+
 ### Running Tests
 
 Start the test database first:
@@ -130,8 +142,10 @@ curl https://gojobtracker-production.up.railway.app/jobs?status=applied&page=1&l
 ```
 
 ## Project Structure
+
 ```
 ├── cmd/server          # Entry point
+├── frontend            # HTML/CSS/JS login page (hosted on GitHub Pages)
 ├── internal/
 │   ├── auth            # JWT generation & middleware
 │   ├── config          # Environment variable loading
